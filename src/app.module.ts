@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import ormConfig from './config/orm.config';
 import ormConfigProd from './config/orm.config.prod';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
 import * as process from 'node:process';
 
 /**
@@ -44,6 +45,7 @@ import * as process from 'node:process';
       useFactory:
         process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
