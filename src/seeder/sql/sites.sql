@@ -1,0 +1,3 @@
+INSERT INTO public.sites (id, uuid, name, address, description) VALUES (1, '01923ca7-8f9a-7505-be5d-5e7881155867', 'WAW01', 'Warszawa ul.Popularna 7', 'WAW01.lorem ipsum dolor sit amet, consectetur');
+INSERT INTO public.sites (id, uuid, name, address, description) VALUES (2, '01923ca7-8f9a-7505-be5d-5e79079c9c44', 'WAW02', 'Warszawa ul.Głąba 33', 'WAW02. Lorem ipsum dolor sit amet, consectetur');
+INSERT INTO public.sites (id, uuid, name, address, description) VALUES (3, '01923ca7-8f9a-7505-be5d-5e7ad3ed5f33', 'WAW03', 'Warszawa ul.Wacława 1011', 'WAW03. Lorem ipsum dolor sit amet, consectetur');
