@@ -90,7 +90,7 @@ export class SeederService {
     return user;
   }
 
-  private async truncateTables() {
+  async truncateTables() {
     await this.entityManager.query(
       `TRUNCATE TABLE user_roles RESTART IDENTITY CASCADE;
        TRUNCATE TABLE sites RESTART IDENTITY CASCADE;
@@ -99,16 +99,16 @@ export class SeederService {
     );
   }
 
-  private async seedSites() {
+  async seedSites() {
     const queries = this.readSqlFile('./sql/sites.sql');
     await this.insertData(queries);
   }
 
-  private async seedRoles() {
+  async seedRoles() {
     const queries = this.readSqlFile('./sql/user_roles.sql');
     await this.insertData(queries);
   }
-  private readSqlFile(filePath: string): string[] {
+  readSqlFile(filePath: string): string[] {
     return fs
       .readFileSync(path.join('src', 'seeder', filePath))
       .toString()
@@ -117,7 +117,7 @@ export class SeederService {
       .filter((query) => query?.length);
   }
 
-  private async insertData(queries: string[]) {
+  async insertData(queries: string[]) {
     for (const query of queries) {
       await this.entityManager.query(query);
     }
