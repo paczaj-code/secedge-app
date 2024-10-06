@@ -6,8 +6,9 @@ describe('AppController', () => {
   let appController: AppController;
   let appService: AppService;
 
+  let app: TestingModule;
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    app = await Test.createTestingModule({
       controllers: [AppController],
       providers: [AppService],
     }).compile();
@@ -17,6 +18,9 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
+    it('module should be defined', () => {
+      expect(app).toBeDefined();
+    });
     it('controller should be defined', () => {
       expect(appController).toBeDefined();
     });
