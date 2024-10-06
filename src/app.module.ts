@@ -7,8 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import ormConfig from './config/orm.config';
 import ormConfigProd from './config/orm.config.prod';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as process from 'node:process';
-
+import { UsersModule } from './users/users.module';
+import { SeederModule } from './seeder/seeder.module';
 /**
  * The AppModule class is the main entry point of the application.
  * It imports and configures various modules necessary for the application to function.
@@ -38,12 +38,17 @@ import * as process from 'node:process';
       isGlobal: true,
       load: [ormConfig],
       expandVariables: true,
-      envFilePath: `${process.env.NODE_ENV}.env`,
+      envFilePath:
+        process.env.NODE_ENV !== 'production'
+          ? `${process.env.NODE_ENV}.env`
+          : '.env',
     }),
     TypeOrmModule.forRootAsync({
       useFactory:
         process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
     }),
+    UsersModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],
