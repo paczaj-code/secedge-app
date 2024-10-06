@@ -73,7 +73,7 @@ export class SeederService {
       last_name: faker.person.lastName(),
       email: faker.internet.email(),
       phone: faker.phone.number(),
-      password_hash:
+      hashed_password:
         '$argon2id$v=19$m=65536,t=3,p=4$AZp5EH6S+1bK8dsj9dcGQA$pmtAFaffXnrSOghiZp6P/RQ3MbNmB3ZfAfDmSvUTLWk',
       is_active: faker.datatype.boolean(0.9),
       is_init_password: faker.datatype.boolean(0.3),

@@ -35,7 +35,7 @@ export class User {
   phone: string;
 
   @Column({ nullable: false, select: false })
-  password_hash: string;
+  hashed_password: string;
 
   @Column({ default: true })
   is_init_password: boolean;
