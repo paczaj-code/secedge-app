@@ -9,7 +9,6 @@ import ormConfigProd from './config/orm.config.prod';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { SeederModule } from './seeder/seeder.module';
-
 /**
  * The AppModule class is the main entry point of the application.
  * It imports and configures various modules necessary for the application to function.
@@ -39,7 +38,10 @@ import { SeederModule } from './seeder/seeder.module';
       isGlobal: true,
       load: [ormConfig],
       expandVariables: true,
-      envFilePath: `${process.env.NODE_ENV}.env`,
+      envFilePath:
+        process.env.NODE_ENV !== 'production'
+          ? `${process.env.NODE_ENV}.env`
+          : '.env',
     }),
     TypeOrmModule.forRootAsync({
       useFactory:
