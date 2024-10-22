@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import ormConfig from './config/orm.config';
 import ormConfigProd from './config/orm.config.prod';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SeederModule } from './seeder/seeder.module';
 
 /**
  * The AppModule class is the main entry point of the application.
@@ -46,6 +47,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       useFactory:
         process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
     }),
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],
