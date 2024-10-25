@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { SitesService } from './sites.service';
 import { CreateSiteDto } from './dto/create-site.dto';
 import { UpdateSiteDto } from './dto/update-site.dto';
@@ -17,9 +25,10 @@ export class SitesController {
     return this.sitesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sitesService.findOne(+id);
+  @Get(':uuid')
+  async findOne(@Param('uuid') uuid: string) {
+    // console.log(uuid);
+    return await this.sitesService.findOne(uuid);
   }
 
   @Patch(':id')
