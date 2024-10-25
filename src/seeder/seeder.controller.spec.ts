@@ -21,7 +21,6 @@ describe('SeederController', () => {
     expect(seederController).toBeDefined();
   });
   it('should seed database', async () => {
-    const result = {}; // Define the expected result here.
     const seed = jest
       .spyOn(seederService, 'seedDatabaseData')
       .mockResolvedValue(undefined);
