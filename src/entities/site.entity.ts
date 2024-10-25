@@ -1,14 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'sites' })
 export class Site {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    type: 'varchar',
-    generated: 'uuid',
-  })
+  @Column()
+  @Generated('uuid')
   uuid: string;
 
   @Column({ nullable: false })
