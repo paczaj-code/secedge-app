@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 
 /**
  * The AppController class handles incoming HTTP requests related to the application's API.
@@ -9,9 +9,4 @@ import { Controller, Get } from '@nestjs/common';
  * the application's functionalities.
  */
 @Controller('')
-export class AppController {
-  @Get('/')
-  sss() {
-    return 'ok';
-  }
-}
+export class AppController {}
