@@ -6,6 +6,7 @@ import * as path from 'node:path';
 import { EntityManager } from 'typeorm';
 import { FakeUserService } from './services/fake.user.service';
 import { fakeSites } from './services/fake.site';
+
 @Injectable()
 export class SeederService {
   constructor(
