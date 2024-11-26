@@ -23,7 +23,7 @@ describe('FakeUserService', () => {
     expect(user.last_name).toMatch(/\w+/);
     expect(user.email).toMatch(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/);
     expect(user.phone).toMatch(/\d+/);
-    expect(await argon2.verify(user.hashed_password, 'Pass@123')).toBe(true);
+    +expect(await argon2.verify(user.hashed_password, 'Pass@123')).toBe(true);
     expect(user.role).toEqual('USER');
   });
 
