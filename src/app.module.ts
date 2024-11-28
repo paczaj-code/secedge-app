@@ -5,10 +5,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import ormConfig from './config/orm.config';
-import ormConfigProd from './config/orm.config.prod';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeederModule } from './seeder/seeder.module';
 import { SitesModule } from './sites/sites.module';
+import * as process from 'node:process';
 
 /**
  * The AppModule class is the main entry point of the application.
@@ -44,10 +44,7 @@ import { SitesModule } from './sites/sites.module';
           ? `${process.env.NODE_ENV}.env`
           : '.env',
     }),
-    TypeOrmModule.forRootAsync({
-      useFactory:
-        process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
-    }),
+    TypeOrmModule.forRoot(ormConfig()),
     SeederModule,
     SitesModule,
   ],
