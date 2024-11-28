@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { registerAs } from '@nestjs/config';
+import * as process from 'node:process';
 
 export default registerAs(
   'orm.config',
@@ -11,6 +12,6 @@ export default registerAs(
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: true,
+    synchronize: Boolean(process.env.DB_DROP_SCHEMA),
   }),
 );
