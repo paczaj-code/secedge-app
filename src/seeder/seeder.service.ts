@@ -1,59 +1,102 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { Site } from '../entities/site.entity';
-import * as fs from 'fs';
-import * as path from 'node:path';
 import { EntityManager } from 'typeorm';
 import { FakeUserService } from './services/fake.user.service';
 import { fakeSites } from './services/fake.site';
 
+/**
+ * Provides functionality for seeding database data,
+ * managing the insertion of fake users and sites,
+ * and truncating tables.
+ */
 @Injectable()
 export class SeederService {
+  private static readonly SELECT_TABLE_NAMES_SQL = `
+  SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema='public' AND table_type='BASE TABLE'
+`;
+
+  private static readonly TRUNCATE_TABLE_SQL = (tableName: string) => `
+  TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;
+  ALTER SEQUENCE ${tableName}_id_seq RESTART 1;
+`;
+
   constructor(
     private entityManager: EntityManager,
     private faker: FakeUserService,
   ) {}
 
-  async seedDatabaseData() {
+  /**
+   * Seeds the database with initial data. This includes truncating existing
+   * tables, and then populating the database with site and user data.
+   *
+   * @return {Promise<void>} A promise that resolves when the database
+   * seeding is complete.
+   */
+  async seedDatabaseData(): Promise<void> {
     await this.truncateTables();
     await this.seedSites();
     await this.seedUsers();
   }
 
-  async seedUsers() {
+  /**
+   * Seeds the database with fake user data.
+   *
+   * This method generates 50 fake user records using the Faker library and
+   * inserts them into the database using the provided entity manager.
+   *
+   * @return {Promise<void>} A promise that resolves when the seeding operation is complete.
+   */
+  async seedUsers(): Promise<void> {
     await this.entityManager.insert(
       User,
       await this.faker.generateFakeUsers(50),
     );
   }
 
-  async seedSites() {
+  /**
+   * Seeds the database with a predefined list of sites.
+   *
+   * This method uses the entity manager to insert a collection of site entities
+   * into the database. The site entities are defined in the `fakeSites` collection.
+   *
+   * @return {Promise<void>} A promise that resolves when the sites have been successfully inserted.
+   */
+  async seedSites(): Promise<void> {
     await this.entityManager.insert(Site, fakeSites);
   }
 
-  async truncateTables() {
-    const tables = await this.entityManager.query(
-      `
-    SELECT table_name
-        FROM information_schema.tables
-        WHERE table_schema='public' AND table_type='BASE TABLE'
-    `,
+  /**
+   * Truncates all tables in the public schema of the database.
+   *
+   * This method selects all table names in the public schema and truncates each table,
+   * restarting their identities and sequences.
+   *
+   * @return {Promise<void>} A promise that resolves when all tables are truncated.
+   */
+
+  private async truncateTable(table: { table_name: string }): Promise<void> {
+    await this.entityManager.query(
+      SeederService.TRUNCATE_TABLE_SQL(table.table_name),
+    );
+  }
+  async truncateTables(): Promise<void> {
+    const tables: { table_name: string }[] = await this.entityManager.query(
+      SeederService.SELECT_TABLE_NAMES_SQL,
     );
     for (const table of tables) {
-      await this.entityManager.query(
-        `TRUNCATE TABLE ${table.table_name} RESTART IDENTITY CASCADE;
-        ALTER SEQUENCE ${table.table_name}_id_seq RESTART 1;
-        `,
-      );
+      await this.truncateTable(table);
     }
   }
 
-  readSqlFile(filePath: string): string[] {
-    return fs
-      .readFileSync(path.join('src', 'seeder', filePath))
-      .toString()
-      .replace(/\r?\n|\r/g, '')
-      .split(';')
-      .filter((query) => query?.length);
-  }
+  // readSqlFile(filePath: string): string[] {
+  //   return fs
+  //     .readFileSync(path.join('src', 'seeder', filePath))
+  //     .toString()
+  //     .replace(/\r?\n|\r/g, '')
+  //     .split(';')
+  //     .filter((query) => query?.length);
+  // }
 }
