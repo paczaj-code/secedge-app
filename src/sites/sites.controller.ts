@@ -6,7 +6,6 @@ import {
   Param,
   Put,
   HttpException,
-  ParseUUIDPipe,
 } from '@nestjs/common';
 import { SitesService } from './sites.service';
 import { CreateSiteDto } from './dto/create-site.dto';
