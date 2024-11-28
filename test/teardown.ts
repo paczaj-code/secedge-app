@@ -1,4 +1,7 @@
+import { SeederService } from '../src/seeder/seeder.service';
+
 module.exports = async () => {
-  // Perform teardown tasks, e.g., close database connections
-  console.log('Global teardown');
+  const seederService = globalThis.APP.get(SeederService);
+  await seederService.truncateTables();
+  await globalThis.APP.close();
 };
