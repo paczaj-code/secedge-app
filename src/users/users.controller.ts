@@ -10,7 +10,6 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { DeepPartial } from 'typeorm';
 import { User } from '../entities/user.entity';
 
 @Controller('users')
