@@ -43,7 +43,6 @@ export class User {
   role: UserRoles;
 
   @ManyToOne(() => Site, (site) => site.id, {
-    // createForeignKeyConstraints: false,
     nullable: false,
   })
   default_site: Site;
@@ -62,4 +61,12 @@ export class User {
 
   @ManyToOne(() => User, (user) => user.id)
   public creator?: number;
+  //   TODO change to obligatory
+
+  public aa?: string[];
+
+  // @AfterLoad()
+  // public setAa() {
+  //   this.aa = this.uuid;
+  // }
 }
