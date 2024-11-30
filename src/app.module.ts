@@ -9,9 +9,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeederModule } from './seeder/seeder.module';
 import { SitesModule } from './sites/sites.module';
 import { UsersModule } from './users/users.module';
-import { PaginatorService } from './generic/paginator/paginator.service';
-import * as process from 'node:process';
-
 /**
  * The AppModule class is the main entry point of the application.
  * It imports and configures various modules necessary for the application to function.
@@ -52,6 +49,6 @@ import * as process from 'node:process';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PaginatorService],
+  providers: [AppService],
 })
 export class AppModule {}
