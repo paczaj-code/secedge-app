@@ -8,6 +8,8 @@ import ormConfig from './config/orm.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeederModule } from './seeder/seeder.module';
 import { SitesModule } from './sites/sites.module';
+import { UsersModule } from './users/users.module';
+import { PaginatorService } from './generic/paginator/paginator.service';
 import * as process from 'node:process';
 
 /**
@@ -47,8 +49,9 @@ import * as process from 'node:process';
     TypeOrmModule.forRoot(ormConfig()),
     SeederModule,
     SitesModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PaginatorService],
 })
 export class AppModule {}
