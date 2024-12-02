@@ -15,7 +15,7 @@ describe('UsersController', () => {
         {
           provide: UsersService,
           useValue: {
-            findAll: jest.fn(),
+            findAll: jest.fn(() => Promise.resolve([])),
           },
         },
       ],
@@ -31,17 +31,17 @@ describe('UsersController', () => {
 
   describe('findAll', () => {
     it('should return an array of users', async () => {
-      const result: User[] = [
-        {
-          id: 1,
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@example.com',
-        } as User,
-      ];
+      const result: User[] = [];
       jest.spyOn(service, 'findAll').mockResolvedValue(result);
 
-      expect(await controller.findAll()).toBe(result);
+      expect(await controller.findAll({})).toBe(result);
+      expect(service.findAll).toHaveBeenCalledWith(
+        NaN,
+        NaN,
+        undefined,
+        undefined,
+        {},
+      );
     });
   });
 });
