@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
   Generated,
   Index,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Site } from './site.entity';
 import { UserRoles } from '../enums/userRoles';
@@ -50,9 +52,6 @@ export class User {
   @Column({ default: true })
   is_active: boolean;
 
-  @Column('text', { array: true, default: '{}' })
-  other_sites: number[];
-
   @CreateDateColumn()
   created_at: Date;
 
@@ -63,10 +62,9 @@ export class User {
   public creator?: number;
   //   TODO change to obligatory
 
-  public aa?: string[];
-
-  // @AfterLoad()
-  // public setAa() {
-  //   this.aa = this.uuid;
-  // }
+  @ManyToMany(() => Site, (site) => site.users_other_sites, {
+    cascade: true,
+  })
+  @JoinTable()
+  public other_sites?: Site[];
 }
