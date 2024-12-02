@@ -46,6 +46,7 @@ export class FakeUserService {
       hashed_password: await argon2.hash('Pass@123'),
       role,
       default_site: faker.helpers.arrayElement(fakeSites),
+      other_sites: faker.helpers.arrayElements(fakeSites, 1),
     };
   }
 
