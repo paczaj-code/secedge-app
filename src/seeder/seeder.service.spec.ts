@@ -45,22 +45,6 @@ describe('SeederService', () => {
     });
   });
 
-  describe('seedUsers', () => {
-    it('should generate users and insert them', async () => {
-      const fakeUsers = [{ id: 1 }, { id: 2 }];
-      jest
-        .spyOn(fakeUserService, 'generateFakeUsers')
-        .mockResolvedValue(fakeUsers);
-      const insertSpy = jest
-        .spyOn(entityManager, 'insert')
-        .mockImplementation();
-
-      await service.seedUsers();
-
-      expect(insertSpy).toHaveBeenCalledWith(User, fakeUsers);
-    });
-  });
-
   describe('seedSites', () => {
     it('should insert sites', async () => {
       const insertSpy = jest
@@ -70,6 +54,23 @@ describe('SeederService', () => {
       await service.seedSites();
 
       expect(insertSpy).toHaveBeenCalledWith(Site, fakeSites);
+    });
+  });
+
+  describe('seedUsers', () => {
+    it('should insert users', async () => {
+      const fakeUsers = [{}]; // Mock whatever structure FakeUserService returns
+      jest
+        .spyOn(fakeUserService, 'generateFakeUsers')
+        .mockResolvedValue(fakeUsers);
+      const saveSpy = jest
+        .spyOn(entityManager, 'save')
+        .mockResolvedValue(fakeUsers);
+
+      await service.seedUsers();
+
+      expect(fakeUserService.generateFakeUsers).toHaveBeenCalledWith(50);
+      expect(saveSpy).toHaveBeenCalledWith(User, fakeUsers);
     });
   });
 
