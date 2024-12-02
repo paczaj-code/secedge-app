@@ -18,10 +18,18 @@ export class SeederService {
     WHERE table_schema='public' AND table_type='BASE TABLE'
 `;
 
+  private static readonly SELECT_SEQUENCE_NAMES_SQL = `
+  SELECT sequence_name
+    FROM information_schema.sequences
+    WHERE sequence_schema='public'
+  `;
+
   private static readonly TRUNCATE_TABLE_SQL = (tableName: string) => `
   TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;
-  ALTER SEQUENCE ${tableName}_id_seq RESTART 1;
 `;
+
+  private static readonly RESTART_SEQUENCE_SQL = (sequence_name: string) =>
+    `ALTER SEQUENCE ${sequence_name} RESTART 1;`;
 
   constructor(
     private entityManager: EntityManager,
@@ -50,10 +58,7 @@ export class SeederService {
    * @return {Promise<void>} A promise that resolves when the seeding operation is complete.
    */
   async seedUsers(): Promise<void> {
-    await this.entityManager.insert(
-      User,
-      await this.faker.generateFakeUsers(50),
-    );
+    await this.entityManager.save(User, await this.faker.generateFakeUsers(50));
   }
 
   /**
@@ -82,12 +87,26 @@ export class SeederService {
       SeederService.TRUNCATE_TABLE_SQL(table.table_name),
     );
   }
+
+  private async restartSequence(sequence: {
+    sequence_name: string;
+  }): Promise<void> {
+    await this.entityManager.query(
+      SeederService.RESTART_SEQUENCE_SQL(sequence.sequence_name),
+    );
+  }
   async truncateTables(): Promise<void> {
     const tables: { table_name: string }[] = await this.entityManager.query(
       SeederService.SELECT_TABLE_NAMES_SQL,
     );
+
+    const sequences: { sequence_name: string }[] =
+      await this.entityManager.query(SeederService.SELECT_SEQUENCE_NAMES_SQL);
     for (const table of tables) {
       await this.truncateTable(table);
+    }
+    for (const sequence of sequences) {
+      await this.restartSequence(sequence);
     }
   }
 
