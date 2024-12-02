@@ -12,6 +12,6 @@ export default registerAs(
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: Boolean(process.env.DB_DROP_SCHEMA),
+    synchronize: true,
   }),
 );
