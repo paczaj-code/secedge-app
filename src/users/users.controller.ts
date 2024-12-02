@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,10 +23,17 @@ export class UsersController {
   }
 
   @Get()
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  async findAll(@Query() params: any): Promise<User[]> {
+    const { page, perPage, orderBy, order, ...rest } = params;
+    return await this.usersService.findAll(
+      +page,
+      +perPage,
+      orderBy,
+      order,
+      rest,
+    );
   }
-
+  // TODO add model
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
