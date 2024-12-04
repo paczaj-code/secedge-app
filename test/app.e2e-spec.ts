@@ -20,6 +20,8 @@ describe('AppController (e2e)', () => {
     const response = await request(globalThis.APP.getHttpServer()).get(
       '/sites',
     );
+
+    console.log(globalThis.seederService);
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(3);
     expect(response.body[0].name).toBe('WAW01');
