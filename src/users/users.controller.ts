@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   Query,
+  HttpException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '../entities/user.entity';
+import { UuidValidationPipePipe } from '../pipes/uuid-validation-pipe/uuid-validation-pipe.pipe';
+import { Site } from '../entities/site.entity';
 
 @Controller('users')
 export class UsersController {
@@ -33,10 +36,11 @@ export class UsersController {
       rest,
     );
   }
-  // TODO add model
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':uuid')
+  findOne(
+    @Param('uuid', new UuidValidationPipePipe()) uuid: string,
+  ): Promise<User> {
+    return this.usersService.findOne(uuid);
   }
 
   @Patch(':id')
