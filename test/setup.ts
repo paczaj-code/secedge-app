@@ -25,6 +25,9 @@ module.exports = async (
   globalThis.APP = app;
   entityManager = globalThis.APP.get(EntityManager);
   seederService = globalThis.APP.get(SeederService);
+  globalThis.APP = app;
+  globalThis.seederService = seederService;
+  globalThis.entityManager = entityManager;
   const fakeUserService = new FakeUserService();
   const users = await fakeUserService.generateFakeUsers(22);
   await seederService.truncateTables();
