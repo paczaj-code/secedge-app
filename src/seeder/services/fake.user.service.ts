@@ -32,7 +32,6 @@ export class FakeUserService {
     this.lastName = faker.person.lastName();
 
     return {
-      uuid: faker.string.uuid(),
       first_name: this.firstName,
       last_name: this.lastName,
       email:
