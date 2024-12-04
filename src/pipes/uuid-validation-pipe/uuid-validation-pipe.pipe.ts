@@ -9,7 +9,7 @@ import { isUUID } from 'class-validator';
 
 @Injectable()
 export class UuidValidationPipePipe implements PipeTransform {
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: any, _metadata: ArgumentMetadata) {
     if (!isUUID(value)) {
       throw new HttpException(
         `Validation failed: given UUId is invalid`,
