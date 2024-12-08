@@ -24,7 +24,7 @@ describe('FakeUserService', () => {
     expect(user.email).toMatch(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/);
     expect(user.phone).toMatch(/\d+/);
     +expect(await argon2.verify(user.hashed_password, 'Pass@123')).toBe(true);
-    expect(user.role).toEqual('USER');
+    expect(user.role).toEqual('OFFICER');
   });
 
   it('should remove accents', () => {
