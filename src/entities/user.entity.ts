@@ -41,7 +41,7 @@ export class User {
   @Column({ default: true })
   is_init_password: boolean;
 
-  @Column({ default: 'USER' })
+  @Column({ default: 'OFFICER' })
   role: UserRoles;
 
   @ManyToOne(() => Site, (site) => site.id, {
