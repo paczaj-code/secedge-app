@@ -13,11 +13,15 @@ export class FakeUserService {
   firstName: string;
   lastName: string;
 
-  async generateFakeUsers(amount: number = 10): Promise<Partial<User>[]> {
+  async generateFakeUsers(
+    amount: number = 10,
+    role: UserRoles = 'OFFICER',
+    seed: number = 333,
+  ): Promise<Partial<User>[]> {
     const users: Partial<User>[] = [];
-    faker.seed(333);
+    faker.seed(seed);
     for (let i = 0; i < amount; i++) {
-      users.push(await this.fakeUser());
+      users.push(await this.fakeUser(role));
     }
     return users;
   }
@@ -27,7 +31,7 @@ export class FakeUserService {
    *
    * @return {Promise<Partial<User>>} A promise that resolves to a partially complete user object.
    */
-  async fakeUser(role: UserRoles = 'USER'): Promise<Partial<User>> {
+  async fakeUser(role: UserRoles = 'OFFICER'): Promise<Partial<User>> {
     this.firstName = faker.person.firstName();
     this.lastName = faker.person.lastName();
 
@@ -41,7 +45,7 @@ export class FakeUserService {
         '@example.com',
       is_init_password: faker.datatype.boolean(0.2),
       phone: faker.phone.number({ style: 'national' }),
-      is_active: faker.datatype.boolean(0.9),
+      is_active: faker.datatype.boolean(0.95),
       hashed_password: await argon2.hash('Pass@123'),
       role,
       default_site: faker.helpers.arrayElement(fakeSites),
