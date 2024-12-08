@@ -7,10 +7,11 @@ import { Site } from '../entities/site.entity';
 import { User } from '../entities/user.entity';
 import { SelectQueryBuilder } from 'typeorm';
 import { QueryHelper } from '../generic/query-helper/query-helper';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService, BaseDatabaseService],
-  imports: [TypeOrmModule.forFeature([Site, User])],
+  imports: [TypeOrmModule.forFeature([Site, User]), AuthModule],
 })
 export class UsersModule {}
