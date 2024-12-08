@@ -7,14 +7,18 @@ import {
   Param,
   Delete,
   Query,
-  HttpException,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Request } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '../entities/user.entity';
 import { UuidValidationPipePipe } from '../pipes/uuid-validation-pipe/uuid-validation-pipe.pipe';
-import { Site } from '../entities/site.entity';
+
+import { Role } from '../decorators/role.decorator';
+import { RoleGuard } from '../auth/guards/role.quard';
 
 @Controller('users')
 export class UsersController {
@@ -26,6 +30,8 @@ export class UsersController {
   }
 
   @Get()
+  @Role('SHIFT_SUPERVISOR')
+  @UseGuards(RoleGuard)
   async findAll(@Query() params: any): Promise<User[]> {
     const { page, perPage, orderBy, order, ...rest } = params;
     return await this.usersService.findAll(
