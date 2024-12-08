@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { SetMetadata } from '@nestjs/common';
-import { Roles } from './role.decorator';
+import { Role } from './role.decorator';
 
 jest.mock('@nestjs/common', () => ({
   SetMetadata: jest.fn(),
@@ -9,7 +9,7 @@ jest.mock('@nestjs/common', () => ({
 describe('Roles Decorator', () => {
   it('should call SetMetadata with the correct parameters', () => {
     const roles = ['admin', 'user'];
-    Roles(...roles);
+    Role(...roles);
 
     expect(SetMetadata).toHaveBeenCalledWith('roles', roles);
   });
