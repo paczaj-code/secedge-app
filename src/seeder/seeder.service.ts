@@ -59,6 +59,14 @@ export class SeederService {
    */
   async seedUsers(): Promise<void> {
     await this.entityManager.save(User, await this.faker.generateFakeUsers(50));
+    await this.entityManager.save(
+      User,
+      await this.faker.generateFakeUsers(3, 'SHIFT_SUPERVISOR', 200),
+    );
+    await this.entityManager.save(
+      User,
+      await this.faker.generateFakeUsers(1, 'TEAM_LEADER', 100),
+    );
   }
 
   /**
