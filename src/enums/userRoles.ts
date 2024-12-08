@@ -1,7 +1,7 @@
 export type UserRoles =
   | 'VIEWER'
-  | 'USER'
+  | 'OFFICER'
   | 'SHIFT_SUPERVISOR'
   | 'TEAM_LEADER'
-  | 'MANAGER'
+  | 'ADMIN'
   | 'SUPER_ADMIN';
