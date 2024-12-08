@@ -5,10 +5,10 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { th } from '@faker-js/faker';
 
 @Controller('auth')
 export class AuthController {
@@ -17,15 +17,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() credentials: LoginDto) {
-    // @ts-ignore
-
-    // try {
     return this.authService.login(credentials);
-    // } catch (e) {
-    //   throw new HttpException(
-    //     'Invalid email or password',
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refreshToken')
+  async refreshToken(@Req() request: Request) {
+    const token = request.headers['authorization']?.split(' ')[1];
+    if (!token)
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    return this.authService.refreshAccessToken(token);
   }
 }
