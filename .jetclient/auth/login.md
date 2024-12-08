@@ -24,7 +24,37 @@ id = '7a15dbe5-e2f5-4acd-8e28-7cb246e1f23c'
 type = 'JSON'
 raw = '''
 {
-  "email": "diana.gil@example.com",
+  "email": "alfred.turek@example.com",
+  "password": "Pass@123"
+}'''
+```
+
+### Example
+
+```toml
+name = 'SHIFT_SUPERVISOR'
+id = 'bc419f52-2d51-407f-a166-7cf118c7484a'
+
+[body]
+type = 'JSON'
+raw = '''
+{
+  "email": "barbara.gorny@example.com",
+  "password": "Pass@123"
+}'''
+```
+
+### Example
+
+```toml
+name = 'TEAM_LEADER'
+id = 'd44804c0-e4ac-4b37-9155-e42da1505218'
+
+[body]
+type = 'JSON'
+raw = '''
+{
+  "email": "ksenia.krzeminski@example.com",
   "password": "Pass@123"
 }'''
 ```
