@@ -3,7 +3,11 @@ import { User } from '../entities/user.entity';
 import { Site } from '../entities/site.entity';
 import { EntityManager } from 'typeorm';
 import { FakeUserService } from './services/fake.user.service';
+import { FakeActivityService } from './services/fake.activity.service';
 import { fakeSites } from './services/fake.site';
+import { fakeActivities } from './services/fake.activities';
+import { ShiftActivity } from '../entities/shift-activity.entity';
+import { fakerPL } from '@faker-js/faker';
 
 /**
  * Provides functionality for seeding database data,
@@ -34,6 +38,7 @@ export class SeederService {
   constructor(
     private entityManager: EntityManager,
     private faker: FakeUserService,
+    private activityService: FakeActivityService,
   ) {}
 
   /**
@@ -47,6 +52,8 @@ export class SeederService {
     await this.truncateTables();
     await this.seedSites();
     await this.seedUsers();
+    await this.seedActivities();
+    await this.activityService.generateFakeActivities();
   }
 
   /**
@@ -81,6 +88,21 @@ export class SeederService {
     await this.entityManager.insert(Site, fakeSites);
   }
 
+  async seedActivities(): Promise<void> {
+    const activities: ShiftActivity[] = [];
+    for (const activity of fakeActivities) {
+      const fakeActivity: Partial<ShiftActivity> = {
+        name: activity,
+        description: 'Description of ' + activity,
+        uuid: fakerPL.string.uuid(),
+        updated_at: new Date(),
+        created_at: new Date(),
+      };
+      activities.push(fakeActivity as ShiftActivity);
+    }
+    await this.entityManager.insert(ShiftActivity, activities);
+  }
+
   /**
    * Truncates all tables in the public schema of the database.
    *
@@ -96,6 +118,13 @@ export class SeederService {
     );
   }
 
+  /**
+   * Restarts a specified database sequence.
+   *
+   * @param {Object} sequence - The sequence details.
+   * @param {string} sequence.sequence_name - The name of the sequence to be restarted.
+   * @return {Promise<void>} A promise that resolves when the sequence has been restarted.
+   */
   private async restartSequence(sequence: {
     sequence_name: string;
   }): Promise<void> {
@@ -103,6 +132,15 @@ export class SeederService {
       SeederService.RESTART_SEQUENCE_SQL(sequence.sequence_name),
     );
   }
+  /**
+   * Truncates all tables and restarts all sequences in the database.
+   *
+   * This method retrieves the names of all tables and sequences in the database,
+   * truncates each table to remove all of its rows, and restarts each sequence
+   * to reset its value. It processes each table and sequence individually.
+   *
+   * @return {Promise<void>} A promise that resolves when all operations are complete.
+   */
   async truncateTables(): Promise<void> {
     const tables: { table_name: string }[] = await this.entityManager.query(
       SeederService.SELECT_TABLE_NAMES_SQL,

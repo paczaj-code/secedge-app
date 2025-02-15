@@ -1,4 +1,6 @@
-export const fakeSites = [
+import { Site } from '../../entities/site.entity';
+
+export const fakeSites: Site[] = [
   {
     id: 1,
     name: 'WAW01',
@@ -7,6 +9,8 @@ export const fakeSites = [
     description: `Debitis hic blanditiis error dicta enim. Pariatur non iusto doloribus totam iste. Assumenda unde corrupti.Aliquam commodi dolorum vero praesentium. Cupiditate error
     laborum quibusdam veritatis optio velit sequi. Quasi officiis similique nam aut perspiciatis quas.Sed quidem ad harum. Laboriosam recusandae quibusdam corporis doloremque aliquam al
     iquid. Repellat ullam optio provident harum sed aliquid adipisci.Laudantium est beatae explicabo ad.`,
+    created_at: new Date(),
+    updated_at: new Date(),
   },
   {
     id: 2,
@@ -17,6 +21,8 @@ export const fakeSites = [
     vel.Sunt nesciunt placeat nihil placeat consequatur quos. Occaecati neque distinctio voluptas est voluptatem culpa voluptatem soluta molestiae. Atque ab mollitia.Impedit sint archite
     cto rerum id aperiam minus totam vel quisquam. Iusto qui ad quibusdam ratione commodi. Adipisci voluptates repudiandae et quam blanditiis enim aperiam adipisci quasi.Placeat debitis doloremque magnam. Atque error consequatur odio doloribus voluptas quasi quam delectus nostrum. 
     Quod neque reprehenderit distinctio ea ratione reiciendis mollitia pariatur.`,
+    created_at: new Date(),
+    updated_at: new Date(),
   },
   {
     id: 3,
@@ -27,5 +33,7 @@ export const fakeSites = [
     iusto recusandae nesciunt eaque ea. Nulla sit repudiandae dolorum saepe. Placeat quis exercitationem laboriosam eligendi ipsam velit.Eveniet exercitationem culpa tempora neque quis
     minima accusamus possimus expedita. Autem velit dicta magnam fugit et unde nemo molestias ratione. Ipsum incidunt soluta quas veniam atque quidem voluptates.Consectetur soluta quo nesciunt possimus quam quo. Veniam a animi impedit. Neque nihil placeat laborum consequatur veritatis exercitationem hic.'
   `,
+    created_at: new Date(),
+    updated_at: new Date(),
   },
 ];

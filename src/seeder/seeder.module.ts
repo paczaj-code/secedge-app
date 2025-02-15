@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { SeederService } from './seeder.service';
 import { SeederController } from './seeder.controller';
 import { FakeUserService } from './services/fake.user.service';
+import { FakeActivityService } from './services/fake.activity.service';
 
 /**
  * SeederModule is responsible for setting up the services and controller
@@ -17,7 +18,7 @@ import { FakeUserService } from './services/fake.user.service';
  * It is intended to be used as part of the application's module system.
  */
 @Module({
-  providers: [SeederService, FakeUserService],
+  providers: [SeederService, FakeUserService, FakeActivityService],
   controllers: [SeederController],
 })
 export class SeederModule {}
