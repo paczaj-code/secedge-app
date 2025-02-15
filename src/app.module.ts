@@ -10,6 +10,7 @@ import { SeederModule } from './seeder/seeder.module';
 import { SitesModule } from './sites/sites.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ShiftActivityModule } from './shift-activity/shift-activity.module';
 /**
  * The AppModule class is the main entry point of the application.
  * It imports and configures various modules necessary for the application to function.
@@ -49,6 +50,7 @@ import { AuthModule } from './auth/auth.module';
     SitesModule,
     UsersModule,
     AuthModule,
+    ShiftActivityModule,
   ],
   controllers: [AppController],
   providers: [AppService],
