@@ -8,15 +8,12 @@ import {
   Delete,
   Query,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Request } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '../entities/user.entity';
 import { UuidValidationPipePipe } from '../pipes/uuid-validation-pipe/uuid-validation-pipe.pipe';
-
 import { Role } from '../decorators/role.decorator';
 import { RoleGuard } from '../auth/guards/role.quard';
 
@@ -30,9 +27,11 @@ export class UsersController {
   }
 
   @Get()
-  @Role('SHIFT_SUPERVISOR')
+  @Role('OFFICER')
   @UseGuards(RoleGuard)
-  async findAll(@Query() params: any): Promise<User[]> {
+  async findAll(
+    @Query() params: any,
+  ): Promise<{ items: User[]; totalItems: number; itemCount: number }> {
     const { page, perPage, orderBy, order, ...rest } = params;
     return await this.usersService.findAll(
       +page,
@@ -41,6 +40,10 @@ export class UsersController {
       order,
       rest,
     );
+    // return await this.usersService.paginatedAllUsers({
+    //   page: +page,
+    //   limit: +perPage,
+    // });
   }
   @Get(':uuid')
   findOne(

@@ -5,8 +5,7 @@ import { BaseDatabaseService } from '../generic/baseDatabase/baseDatabase.servic
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Site } from '../entities/site.entity';
 import { User } from '../entities/user.entity';
-import { SelectQueryBuilder } from 'typeorm';
-import { QueryHelper } from '../generic/query-helper/query-helper';
+
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
