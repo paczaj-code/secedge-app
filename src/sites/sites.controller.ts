@@ -6,13 +6,15 @@ import {
   Param,
   Put,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import { SitesService } from './sites.service';
 import { CreateSiteDto } from './dto/create-site.dto';
 import { UpdateSiteDto } from './dto/update-site.dto';
 import { Site } from '../entities/site.entity';
 import { UuidValidationPipePipe } from '../pipes/uuid-validation-pipe/uuid-validation-pipe.pipe';
-
+import { Role } from '../decorators/role.decorator';
+import { RoleGuard } from '../auth/guards/role.quard';
 /**
  * SitesController handles all incoming HTTP requests related to site resources.
  */
@@ -37,6 +39,8 @@ export class SitesController {
    * @return {Promise<Site[]>} A promise that resolves to an array of items.
    */
   @Get()
+  @Role('OFFICER')
+  @UseGuards(RoleGuard)
   async findAll(): Promise<Site[]> {
     return await this.sitesService.findAll();
   }
@@ -48,6 +52,8 @@ export class SitesController {
    * @return {Promise<Site | HttpException>} - A promise that resolves to the site object if found.
    */
   @Get(':uuid')
+  @Role('OFFICER')
+  @UseGuards(RoleGuard)
   async findOne(
     @Param('uuid', new UuidValidationPipePipe()) uuid: string,
   ): Promise<Site | HttpException> {

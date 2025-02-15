@@ -7,6 +7,7 @@ import * as fs from 'node:fs';
 import { UserRoles } from '../enums/userRoles';
 import { JwtService } from '@nestjs/jwt';
 import * as process from 'node:process';
+import { Site } from '../entities/site.entity';
 
 interface AccessTokenPayload {
   id: number;
@@ -15,6 +16,8 @@ interface AccessTokenPayload {
   role: UserRoles;
   firstName: string;
   lastName: string;
+  default_site: Site;
+  other_sites?: Site[];
 }
 
 interface RefreshTokenPayload {
@@ -39,7 +42,18 @@ export class AuthService {
     this.publicKey = fs.readFileSync('public.pem');
   }
 
-  async login(credentials: LoginDto) {
+  /**
+   * Authenticates a user with the provided login credentials.
+   * Checks the user's email and password against the stored user data.
+   * Throws an exception if the credentials are invalid.
+   *
+   * @param {LoginDto} credentials - The login credentials, including email and password.
+   * @return {Promise<object>} A promise that resolves to the authentication tokens for the user.
+   * @throws {HttpException} If the provided email or password is invalid.
+   */
+  async login(
+    credentials: LoginDto,
+  ): Promise<{ refreshToken: string; accessToken: string }> {
     const user = await this.userService.findUserByEmail(credentials.email);
     if (
       !user ||
@@ -54,7 +68,15 @@ export class AuthService {
     return this.getTokens(user);
   }
 
-  async getTokens(user: User) {
+  /**
+   * Generates and returns an access token and a refresh token for the specified user.
+   *
+   * @param {User} user - The user object containing information required to generate the tokens.
+   * @return {Promise<{refreshToken: string, accessToken: string}>} A promise resolving to an object containing the generated refresh token and access token.
+   */
+  async getTokens(
+    user: User,
+  ): Promise<{ refreshToken: string; accessToken: string }> {
     const refreshTokenPayload: RefreshTokenPayload = {
       id: user.id,
       uuid: user.uuid,
@@ -66,6 +88,8 @@ export class AuthService {
       role: user.role,
       firstName: user.first_name,
       lastName: user.last_name,
+      default_site: user.default_site,
+      other_sites: user.other_sites.length > 0 ? user.other_sites : undefined,
     };
     const [refreshToken, accessToken] = await Promise.all([
       this.jwtService.signAsync(refreshTokenPayload, {
@@ -75,7 +99,7 @@ export class AuthService {
       }),
       this.jwtService.signAsync(accessTokenPayload, {
         secret: this.privateKey,
-        expiresIn: '5m',
+        expiresIn: '1h',
         algorithm: 'RS512',
       }),
     ]);
@@ -84,6 +108,22 @@ export class AuthService {
       refreshToken,
       accessToken,
     };
+  }
+
+  async relogin(refreshToken: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.REFRESH_JWT_SECRET,
+      });
+      console.log(payload);
+      if (payload) {
+        const user = await this.userService.findOne(payload.uuid);
+        console.log(user);
+        return this.getTokens(user);
+      }
+    } catch (e) {
+      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   async refreshAccessToken(refreshToken: string) {
@@ -99,10 +139,9 @@ export class AuthService {
       if ((payload.exp - now) / 3600 > 2) {
         newTokens.refreshToken = refreshToken;
       }
-
       return newTokens;
     } catch (e) {
-      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid access token', HttpStatus.UNAUTHORIZED);
     }
   }
 

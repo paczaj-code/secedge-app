@@ -47,6 +47,8 @@ describe('SitesController', () => {
         description: 'Test description',
       };
       const result: Site = {
+        created_at: undefined,
+        updated_at: undefined,
         id: 1,
         uuid: '0c51815e-e604-48ab-8d74-6c85dd7305bf',
         ...createSiteDto,
@@ -89,6 +91,8 @@ describe('SitesController', () => {
     it('should return a single site by UUID', async () => {
       const uuid = '0c51815e-e604-48ab-8d74-6c85dd7305bf';
       const result: Site = {
+        created_at: undefined,
+        updated_at: undefined,
         id: 1,
         uuid: uuid,
         name: 'Test Site',

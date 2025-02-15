@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { User } from '../../entities/user.entity';
@@ -47,7 +53,8 @@ export class RoleGuard implements CanActivate {
     if (!token) return false;
 
     const decodedToken = this.verifyToken(token, request);
-    if (!decodedToken) return false;
+    if (!decodedToken)
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
 
     const requiredRole = this.reflector.getAllAndOverride<Role[]>(ROLE_KEY, [
       context.getHandler(),

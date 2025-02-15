@@ -1,11 +1,16 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Generated,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { ShiftActivity } from './shift-activity.entity';
+import { ActivityToSite } from './activity-to-site.entity';
 
 /**
  * Represents a Site entity with properties such as id, uuid, name, address, and description.
@@ -29,6 +34,15 @@ export class Site {
   @Column({ nullable: true, type: 'text' })
   description: string;
 
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
   @ManyToMany(() => User, (user) => user.other_sites)
   public users_other_sites?: User[];
+
+  @OneToMany(() => ActivityToSite, (activityToSite) => activityToSite.site_id)
+  public activities_to_sites?: ActivityToSite[];
 }

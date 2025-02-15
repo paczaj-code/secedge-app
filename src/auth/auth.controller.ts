@@ -21,11 +21,21 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Post('relogin')
+  async relogin(@Req() request: Request) {
+    const token = request.headers['authorization']?.split(' ')[1];
+    if (!token)
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+
+    return this.authService.relogin(token);
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Post('refreshToken')
   async refreshToken(@Req() request: Request) {
     const token = request.headers['authorization']?.split(' ')[1];
     if (!token)
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
-    return this.authService.refreshAccessToken(token);
+    return this.authService.relogin(token);
   }
 }

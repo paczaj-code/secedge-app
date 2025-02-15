@@ -56,13 +56,41 @@ export class SitesService {
    * @throws {HttpException} If the site is not found, an exception is thrown with status NOT_FOUND.
    */
   async findOne(uuid: string): Promise<Site | HttpException> {
-    const site = await this.siteRepository.findOne({
-      where: {
-        uuid: uuid,
-      },
-    });
-    if (!site) throw new HttpException('Site not found', HttpStatus.NOT_FOUND);
-    return site;
+    const site = await this.siteRepository.query(
+      `
+    WITH some_q AS (
+    SELECT 
+        s.name, 
+        acs.weekday, 
+        acs.shift_number,
+        sa.name AS acti_name,
+        acs.time
+    
+    FROM 
+        activity_to_site AS acs
+        JOIN public.sites s ON s.id = acs.site_id
+        JOIN public.shift_activity sa ON sa.id = acs.activity_id
+    WHERE 
+        s.uuid=$1 and weekday IS NOT NULL
+    ORDER BY 
+        acs.weekday
+)
+SELECT *,
+(SELECT json_agg(some_q) as audits
+ FROM some_q)
+FROM sites
+WHERE sites.uuid=$1
+    `,
+      [uuid],
+    );
+    // const site = await this.siteRepository.findOne({
+    //   where: {
+    //     uuid: uuid,
+    //   },
+    // });
+    if (!site.length)
+      throw new HttpException('Site not found', HttpStatus.NOT_FOUND);
+    return site[0];
   }
 
   /**

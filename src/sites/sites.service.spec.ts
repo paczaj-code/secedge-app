@@ -142,6 +142,8 @@ describe('SitesService', () => {
         name: 'Test Site',
         address: 'Test Address',
         description: 'Test Description',
+        created_at: undefined,
+        updated_at: undefined,
       };
 
       jest.spyOn(siteRepository, 'findOne').mockResolvedValue(site);
@@ -228,6 +230,8 @@ describe('SitesService', () => {
         uuid: 'baseDatabase-uuid',
         address: 'baseDatabase-address',
         description: 'baseDatabase-description',
+        created_at: undefined,
+        updated_at: undefined,
       };
       jest.spyOn(siteRepository, 'findOne').mockResolvedValue(existingSite);
 
