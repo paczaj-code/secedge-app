@@ -4,6 +4,7 @@ import * as argon2 from 'argon2';
 import { UserRoles } from '../../enums/userRoles';
 import { fakeSites } from './fake.site';
 import { Injectable } from '@nestjs/common';
+import { Site } from '../../entities/site.entity';
 
 @Injectable()
 /**
@@ -12,6 +13,8 @@ import { Injectable } from '@nestjs/common';
 export class FakeUserService {
   firstName: string;
   lastName: string;
+  defaultSite: Site;
+  otherSites: Site[];
 
   async generateFakeUsers(
     amount: number = 10,
@@ -34,6 +37,7 @@ export class FakeUserService {
   async fakeUser(role: UserRoles = 'OFFICER'): Promise<Partial<User>> {
     this.firstName = faker.person.firstName();
     this.lastName = faker.person.lastName();
+    this.defaultSite = faker.helpers.arrayElement(fakeSites);
 
     return {
       first_name: this.firstName,
@@ -48,8 +52,10 @@ export class FakeUserService {
       is_active: faker.datatype.boolean(0.95),
       hashed_password: await argon2.hash('Pass@123'),
       role,
-      default_site: faker.helpers.arrayElement(fakeSites),
-      other_sites: faker.helpers.arrayElements(fakeSites, 1),
+      default_site: this.defaultSite,
+      other_sites: this.randomOtherSite(
+        fakeSites.filter((site) => site.id !== this.defaultSite.id),
+      ),
     };
   }
 
@@ -63,6 +69,17 @@ export class FakeUserService {
     {
       const result = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       return result.replace(/\u0142/g, 'l').replace(/\u0141/g, 'L');
+    }
+  }
+
+  randomOtherSite(sites: Site[]): Site[] | [] {
+    const randomFactor = Math.floor(Math.random() * 11);
+    if (randomFactor > 0 && randomFactor <= 1) {
+      return [];
+    } else if (randomFactor > 1 && randomFactor <= 8) {
+      return faker.helpers.arrayElements(sites, 1);
+    } else {
+      return faker.helpers.arrayElements(sites, 2);
     }
   }
 }
