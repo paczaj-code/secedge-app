@@ -23,7 +23,7 @@ export class ActivityToSite {
   @Column({ nullable: true })
   weekday: number;
 
-  @Column()
+  @Column({ type: 'time', nullable: true })
   time: string;
 
   @Column()
