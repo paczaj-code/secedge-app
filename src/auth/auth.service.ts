@@ -110,15 +110,20 @@ export class AuthService {
     };
   }
 
-  async relogin(refreshToken: string) {
+  /**
+   * Attempts to refresh a user's authentication by verifying the provided refresh token.
+   *
+   * @param {string} refreshToken - The refresh token used to verify and generate new authentication tokens.
+   * @return {Promise<Object>} A promise that resolves to a new set of authentication tokens if the refresh token is valid.
+   * @throws {HttpException} Throws an exception if the provided refresh token is invalid or verification fails.
+   */
+  async relogin(refreshToken: string): Promise<object> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: process.env.REFRESH_JWT_SECRET,
       });
-      console.log(payload);
       if (payload) {
         const user = await this.userService.findOne(payload.uuid);
-        console.log(user);
         return this.getTokens(user);
       }
     } catch (e) {
@@ -153,7 +158,7 @@ export class AuthService {
   }
 
   verifyAccessToken(token: string) {
-    return this.jwtService.verify(token, { secret: this.privateKey });
+    return this.jwtService.verify(token, { secret: this.publicKey });
   }
 
   verifyRefreshToken(token: string) {
