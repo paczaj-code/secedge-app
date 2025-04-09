@@ -9,7 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { ShiftActivity } from './shift-activity.entity';
 import { ActivityToSite } from './activity-to-site.entity';
 
 /**
