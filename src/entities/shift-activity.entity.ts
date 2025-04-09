@@ -3,11 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ActivityToSite } from './activity-to-site.entity';
+import { ShiftActivityType } from './shift-activity-type.entity';
 
 @Entity()
 export class ShiftActivity {
@@ -21,7 +21,7 @@ export class ShiftActivity {
   @Column({ nullable: false, unique: true })
   name: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @CreateDateColumn()
@@ -30,9 +30,9 @@ export class ShiftActivity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(
-    () => ActivityToSite,
-    (activityToSite) => activityToSite.activity_id,
+  @ManyToOne(
+    () => ShiftActivityType,
+    (shiftActivityType) => shiftActivityType.activities,
   )
-  public activities_to_sites?: ActivityToSite[];
+  public type: ShiftActivityType;
 }

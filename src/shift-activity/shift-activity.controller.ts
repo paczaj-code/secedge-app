@@ -6,11 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ShiftActivityService } from './shift-activity.service';
 import { CreateShiftActivityDto } from './dto/create-shift-activity.dto';
 import { UpdateShiftActivityDto } from './dto/update-shift-activity.dto';
+import { Role } from '../decorators/role.decorator';
+import { RoleGuard } from '../auth/guards/role.quard';
 
+@Role('TEAM_LEADER')
+@UseGuards(RoleGuard)
 @Controller('shift-activity')
 export class ShiftActivityController {
   constructor(private readonly shiftActivityService: ShiftActivityService) {}
