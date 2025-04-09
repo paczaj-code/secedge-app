@@ -29,9 +29,7 @@ export class UsersController {
   @Get()
   @Role('OFFICER')
   @UseGuards(RoleGuard)
-  async findAll(
-    @Query() params: any,
-  ): Promise<{ items: User[]; totalItems: number; itemCount: number }> {
+  async findAll(@Query() params: any) {
     const { page, perPage, orderBy, order, ...rest } = params;
     return await this.usersService.findAll(
       +page,
@@ -44,6 +42,11 @@ export class UsersController {
     //   page: +page,
     //   limit: +perPage,
     // });
+  }
+
+  @Get('demo-users')
+  demLoginUsers() {
+    return this.usersService.demLoginUsers();
   }
   @Get(':uuid')
   findOne(

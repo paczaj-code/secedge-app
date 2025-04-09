@@ -141,4 +141,46 @@ export class UsersService {
 
     return user;
   }
+
+  async demLoginUsers() {
+    return await this.userRepository.query(`
+        WITH users_data AS (
+            SELECT users.id,
+                   users.uuid,
+                   users.first_name,
+                   users.last_name,
+                   users.email,
+                   users.phone,
+                   users.role,
+                   s.name AS default_site,
+                   (SELECT count(*)
+                    FROM users_other_sites_sites
+                    WHERE "usersId" = users.id) AS sites_count,
+                   (SELECT json_agg(s_sub.name)
+                    FROM users_other_sites_sites
+                             JOIN public.sites s_sub
+                                  ON s_sub.id = users_other_sites_sites."sitesId"
+                    WHERE "usersId" = users.id) AS other_sites
+            FROM users
+                     JOIN public.sites s
+                          ON s.id = users."defaultSiteId"
+        )
+
+        SELECT * FROM users_data WHERE role='TEAM_LEADER'
+        UNION ALL
+        (SELECT * FROM users_data WHERE role='SHIFT_SUPERVISOR' LIMIT 3)
+        UNION ALL
+        (SELECT * FROM users_data WHERE sites_count=0 AND users_data.default_site='WAW01' LIMIT 1)
+        UNION ALL
+        (SELECT * FROM users_data WHERE sites_count=0 AND users_data.default_site='WAW02' LIMIT 1)
+        UNION ALL
+        (SELECT * FROM users_data WHERE sites_count=2 AND users_data.default_site='WAW02' LIMIT 1)
+        UNION ALL
+        (SELECT * FROM users_data WHERE sites_count=1 AND users_data.default_site='WAW03' LIMIT 1)
+        ORDER BY role DESC
+    `);
+  }
+  async findUserById(id: number): Promise<User> {
+    return await this.userRepository.findOne({ where: { id } });
+  }
 }

@@ -12,7 +12,12 @@ import {
 } from 'typeorm';
 import { Site } from './site.entity';
 import { UserRoles } from '../enums/userRoles';
+import { IsBoolean, IsDate, IsEmail, IsString } from 'class-validator';
 
+/**
+ * Represents a User entity with properties for user information, roles,
+ * relationships, and activity status. This class is mapped to the 'users' database table.
+ */
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
@@ -23,21 +28,27 @@ export class User {
   @Generated('uuid')
   uuid: string;
 
+  @IsString()
   @Column({ nullable: false })
   first_name: string;
 
+  @IsString()
   @Column({ nullable: false })
   last_name: string;
 
+  @IsEmail()
   @Column({ nullable: false })
   email: string;
 
+  @IsString()
   @Column({ nullable: true })
   phone: string;
 
-  @Column({ nullable: false })
+  @IsString()
+  @Column({ nullable: false, select: false })
   hashed_password: string;
 
+  @IsBoolean()
   @Column({ default: true })
   is_init_password: boolean;
 
@@ -49,12 +60,15 @@ export class User {
   })
   default_site: Site;
 
+  @IsBoolean()
   @Column({ default: true })
   is_active: boolean;
 
+  @IsDate()
   @CreateDateColumn()
   created_at: Date;
 
+  @IsDate()
   @UpdateDateColumn()
   updated_at: Date;
 
