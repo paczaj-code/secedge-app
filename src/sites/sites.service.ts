@@ -58,28 +58,71 @@ export class SitesService {
   async findOne(uuid: string): Promise<Site | HttpException> {
     const site = await this.siteRepository.query(
       `
-    WITH some_q AS (
-    SELECT 
-        s.name, 
-        acs.weekday, 
-        acs.shift_number,
-        sa.name AS acti_name,
-        acs.time
-    
-    FROM 
-        activity_to_site AS acs
-        JOIN public.sites s ON s.id = acs.site_id
-        JOIN public.shift_activity sa ON sa.id = acs.activity_id
-    WHERE 
-        s.uuid=$1 and weekday IS NOT NULL
-    ORDER BY 
-        acs.weekday
-)
-SELECT *,
-(SELECT json_agg(some_q) as audits
- FROM some_q)
-FROM sites
-WHERE sites.uuid=$1
+          WITH site_id AS (SELECT id
+                           FROM sites
+                           WHERE uuid = $1),
+
+               audits AS (SELECT s.name,
+                                 acs.weekday,
+                                 acs.shift_number,
+                                 sa.name AS audit_name,
+                                 acs.time
+                          FROM activity_to_site AS acs
+                                   INNER JOIN public.sites s ON s.id = acs.site_id
+                                   INNER JOIN public.shift_activity sa ON sa.id = acs.activity_id
+                          WHERE s.id = (SELECT id FROM site_id)
+                            and weekday IS NOT NULL
+                          ORDER BY acs.weekday),
+               patrols AS (SELECT s.name,
+                                  acs.time,
+                                  sa.name as patrol_name
+                           FROM activity_to_site AS acs
+                                    INNER JOIN public.sites s on s.id = acs.site_id
+                                    INNER JOIN public.shift_activity sa on acs.activity_id = sa.id
+                           WHERE s.id = (SELECT id FROM site_id)
+                             and weekday IS NULL
+                           ORDER BY acs.time),
+               users_ids AS (SELECT id
+                             FROM users
+                             WHERE "defaultSiteId" = (SELECT id
+                                                      FROM sites
+                                                      WHERE sites.id = (SELECT id FROM site_id))
+                             UNION
+                             SELECT DISTINCT "usersId"
+                             FROM users_other_sites_sites
+                             WHERE "sitesId" = (SELECT id
+                                                FROM sites
+                                                WHERE sites.id = (SELECT id FROM site_id))),
+               users AS (SELECT DISTINCT users.id,
+                                         users.uuid,
+                                         users.first_name,
+                                         users.last_name,
+                                         users.email,
+                                         users.phone,
+                                         users.role,
+                                         s.name AS default_site,
+                                         (SELECT json_agg(s_sub.name)::text as other_sites
+                                          FROM users_other_sites_sites
+                                                   JOIN public.sites s_sub on s_sub.id = users_other_sites_sites."sitesId"
+                                          WHERE "usersId" = users.id)
+                         FROM users
+                                  JOIN public.sites s on s.id = users."defaultSiteId"
+                         WHERE users.id IN (SELECT id FROM users_ids))
+          SELECT name,
+                 uuid,
+                 address,
+                 description,
+                 created_at,
+                 updated_at,
+                 (SELECT json_agg(audits) as audits
+                  FROM audits),
+                 (SELECT json_agg(patrols) as patrols
+                  FROM patrols),
+                 (SELECT json_agg(users) as users
+                  FROM users)
+          FROM sites
+          WHERE sites.id = (SELECT id FROM site_id)
+
     `,
       [uuid],
     );
